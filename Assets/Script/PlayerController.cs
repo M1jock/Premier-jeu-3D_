@@ -7,8 +7,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     public Rigidbody rb;
 
-    Vector3 inputDir;
-
     [SerializeField]
     public float moveSpeed = 10;
 
@@ -17,6 +15,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     Camera cam;
+
+    Vector3 inputDir;
 
     float CurrentVelocity;
     float smoothTime = 0.05f;
@@ -27,9 +27,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isDead;
 
-    private bool jumpKeyPress;
-
-    private bool playerIsOnGround;
+    //private bool jumpKeyPress;
 
     public static PlayerController instance;
     [SerializeField]
@@ -45,6 +43,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
         NmbrHp.instance.textUpdate();
+        isDead = false;
     }
 
 
@@ -54,23 +53,13 @@ public class PlayerController : MonoBehaviour
         inputDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         inputDir.Normalize();           //Normalize = reset la base � 1 (le total de X Y Z = 1)
         //if (Input.GetAxis("Jump") > 0)
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)&& isGrounded())
         {
-            jumpKeyPress = true;
+            //jumpKeyPress = true;
+            Jump();
+            
         }
-    }
-    public void TakeDamage(int damage)
-    {
-        currentHealth -= damage;
-        HpUpdate();
-
-        if (currentHealth <= 0 && !isDead)
-        {
-            isDead = true;
-            Debug.Log("Game Over");
-            //GameManager.instance.GameOver();
-            Destroy(this.gameObject);
-        }
+        UpdateAnimationPlayer(inputDir);
     }
     private void HpUpdate()
     {
@@ -78,15 +67,13 @@ public class PlayerController : MonoBehaviour
         NmbrHp.instance.textUpdate();
     }
 
-
     private void FixedUpdate()
     {
         Move();
-        UpdateAnimation(inputDir);
-        if (jumpKeyPress)
+        /*if (jumpKeyPress)
         {
             Jump();
-        }
+        }*/
     }
 
     void Move()
@@ -110,12 +97,42 @@ public class PlayerController : MonoBehaviour
     void Jump()
     {
         rb.AddForce(new Vector3(0, 10, 0), ForceMode.Impulse);
-        jumpKeyPress = false;
+        //jumpKeyPress = false;
     }
-    private void UpdateAnimation(Vector3 dir)
+    public void TakeDamage(int damage)
     {
+        currentHealth -= damage;
+        HpUpdate();
+        
+        if (currentHealth <= 0 && !isDead)
+        {
+            currentHealth = 0;
+            Debug.Log("Game Over");
+            isDead = true;
+            UpdateAnimationPlayer(inputDir);
+            //GameManager.instance.GameOver();
+            Destroy(this.gameObject);
+        }
+    }
+    public void UpdateAnimationPlayer(Vector3 dir)
+    {
+        if (isDead)
+        {
+            animator.SetBool("isDead", true);
+        }
         animator.SetFloat("Forward", dir.z);
         animator.SetFloat("Straf", dir.x);
+        if (!isGrounded())
+        {
+            
+        }
+        animator.SetBool("JumpUp", !isGrounded());
     }
-
+    bool isGrounded()
+    {
+        return Mathf.Abs(rb.velocity.y) < 0.01f;
+        //Si au dessus de la valeur f alors considéré en Jump
+        //return Physics.Raycast(transform.position + new Vector3(0, 0.1f, 0), Vector3.down, 0.2f);
+        //Pareil que Mathf mais en raycast
+    }
 }

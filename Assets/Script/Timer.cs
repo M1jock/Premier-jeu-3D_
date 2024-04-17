@@ -42,7 +42,7 @@ public class Timer : MonoBehaviour
         }
         else
         {
-            return seconds + " sec";
+            return secondsLeftStr + " sec";
         }
     }
 

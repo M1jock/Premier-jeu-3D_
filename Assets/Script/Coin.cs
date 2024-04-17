@@ -1,15 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Coin : MonoBehaviour
+public class Coin : MonoBehaviour ,ICollectable
 {
-    public int point;
+    [SerializeField]
+    AudioSource coinAudioSource;
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField]
+    GameObject visual;
+
+    public int point;
+    public static Coin instance;
+    private void Awake()
     {
-        
+        instance = this;
+    }
+    public void OnCollected()
+    {
+        Destroy(this.gameObject);
+    }
+    IEnumerator CollectCorout()
+    {
+        coinAudioSource.Play();
+        visual.SetActive(false);
+
+        while (coinAudioSource.isPlaying)
+        {
+            yield return null;
+        }
+        Destroy(this.gameObject);
     }
     private void OnCollisionEnter(Collision collision)
     {
