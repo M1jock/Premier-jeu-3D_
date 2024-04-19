@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PersistantData : MonoBehaviour
 {
-    int coins;
+    public int coins;
 
-    float time;
+    public float time;
 
     public int ennemyKilled;
     public static PersistantData instance;

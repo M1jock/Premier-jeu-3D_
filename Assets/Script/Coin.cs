@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Coin : MonoBehaviour ,ICollectable
+public class Coin : MonoBehaviour, ICollectable
 {
     [SerializeField]
     AudioSource coinAudioSource;
@@ -19,7 +19,7 @@ public class Coin : MonoBehaviour ,ICollectable
     }
     public void OnCollected()
     {
-        Destroy(this.gameObject);
+        StartCoroutine(CollectCorout());
     }
     IEnumerator CollectCorout()
     {
@@ -30,14 +30,10 @@ public class Coin : MonoBehaviour ,ICollectable
         {
             yield return null;
         }
-        Destroy(this.gameObject);
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        Destroy(this.gameObject);
-    }
-    private void OnDestroy()
-    {
         Score.instance.AddScore(point);
+        Destroy(this.gameObject);
+
+
+
     }
 }

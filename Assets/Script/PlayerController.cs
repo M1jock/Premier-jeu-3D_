@@ -135,4 +135,15 @@ public class PlayerController : MonoBehaviour
         //return Physics.Raycast(transform.position + new Vector3(0, 0.1f, 0), Vector3.down, 0.2f);
         //Pareil que Mathf mais en raycast
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        ICollectable iCollectable = other.GetComponent<ICollectable>();
+
+        //recuperer les pièces et rajouter de la value dans le persistant data
+        if (iCollectable != null)
+        {
+            iCollectable.OnCollected();
+        }
+        
+    }
 }

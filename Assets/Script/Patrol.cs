@@ -15,6 +15,7 @@ public class Patrol : MonoBehaviour
     {
         EnnemiAi();
     }
+
     public void EnnemiAi()
     {
         StartCoroutine(PatrolCorout());
@@ -40,6 +41,7 @@ public class Patrol : MonoBehaviour
                 float t = 0;
                 while (t < 1.01f)
                 {
+                    transform.Translate(targetPos * speed * Time.deltaTime);
                     //Debug.Log(Vector3.Distance(transform.position, waypointInfo.target.position));
                     transform.position = Vector3.Lerp(startPos, targetPos, t);
                     t += Time.deltaTime;
